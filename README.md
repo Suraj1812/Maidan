@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Maidan
 
-## Getting Started
+**Apna Maidan. Apni Takkar.**
 
-First, run the development server:
+Maidan is a real, end-to-end college competition platform: squads, challenges, evidence uploads, public voting, disputes, moderation, real-time notifications, and leaderboards computed entirely from live database activity — no fixtures, no fake numbers.
+
+Built with Next.js (App Router), TypeScript, Tailwind CSS, Framer Motion, shadcn/ui, and Supabase (Auth, Postgres, Storage, Realtime).
+
+## 1. Set up Supabase
+
+1. Create a project at [supabase.com](https://supabase.com).
+2. In the SQL Editor, run the migrations in `supabase/migrations/` **in order** (`0001` → `0005`). Each file is idempotent-ish but must run once, in sequence.
+   - `0001_init.sql` — tables, enums, RLS policies, seed categories & badges
+   - `0002_functions.sql` — transactional RPCs (accept invite, accept/finalize challenge, resolve dispute)
+   - `0003_storage.sql` — `evidence` and `avatars` storage buckets + policies
+   - `0004_views.sql` — leaderboard views (squad/college/city/player), all real-data-driven
+   - `0005_rate_limit.sql` — centralized rate limiting table + `check_rate_limit()`
+3. In **Project Settings → API**, copy your Project URL and `anon` public key.
+4. (Optional) To promote a user to moderator/admin so they can access `/moderation`, run:
+   ```sql
+   update profiles set role = 'moderator' where username = 'your_username';
+   ```
+
+## 2. Configure environment variables
+
+Copy `.env.example` to `.env.local` and fill in your Supabase values:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.example .env.local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+```
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 3. Run locally
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm install
+npm run dev
+```
 
-## Learn More
+Open [http://localhost:3000](http://localhost:3000).
 
-To learn more about Next.js, take a look at the following resources:
+## 4. Deploy to Vercel
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Push this repo to GitHub (already done if you're reading this from the repo).
+2. Import the repo at [vercel.com/new](https://vercel.com/new).
+3. Add the same three environment variables in the Vercel project settings — set `NEXT_PUBLIC_SITE_URL` to your production URL (e.g. `https://your-app.vercel.app`).
+4. In Supabase → **Authentication → URL Configuration**, add your production URL and `https://your-app.vercel.app/auth/callback` to the allowed redirect URLs.
+5. Deploy.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## What's real vs. what's still manual
 
-## Deploy on Vercel
+- **Real**: auth, RLS-protected data access, squad/challenge/evidence/vote/dispute flows, leaderboards (SQL views over live tables), notifications (Postgres rows + Realtime push), rate limiting (DB-backed, works across serverless instances).
+- **Manual for now**: challenge finalization is lazy (triggered when someone opens a challenge page past its voting deadline) rather than on a cron — wire up a Supabase scheduled function calling `finalize_challenge(challenge_id)` if you want it to happen without a visit. Promoting moderators is a manual SQL step (see above) rather than an admin UI.
+- **Honest empty states everywhere**: no seeded users, squads, matches, or testimonials. Every number on the landing page and leaderboards is a live `count`/`sum` from Postgres and will read zero until real people use the product.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Project structure
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `src/app/(auth)` — login/signup
+- `src/app/(app)` — authenticated app (dashboard, squads, challenges, leaderboard, notifications, moderation)
+- `src/app/u/[username]` — public profile pages
+- `src/lib/data.ts` — read queries (server-only, degrade to empty on error)
+- `src/lib/actions/` — server actions (mutations, validated with Zod, rate-limited)
+- `supabase/migrations/` — full schema, RLS, RPCs, storage policies, views
