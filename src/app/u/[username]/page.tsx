@@ -3,7 +3,7 @@ import Link from "next/link";
 import { BadgeCheck, Trophy } from "lucide-react";
 import { getProfileByUsername } from "@/lib/data";
 import { getCurrentProfile } from "@/lib/data";
-import { getIcon } from "@/lib/icon-map";
+import { CategoryIcon } from "@/lib/icon-map";
 import { CinematicBackground } from "@/components/landing/cinematic-background";
 import { Navbar } from "@/components/site/navbar";
 import { Footer } from "@/components/site/footer";
@@ -52,14 +52,13 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
             <div className="flex flex-wrap gap-3">
               {badges.map((b) => {
                 const badge = b.badge as unknown as { id: string; name: string; description: string; icon: string };
-                const Icon = getIcon(badge.icon);
                 return (
                   <div
                     key={badge.id}
                     title={badge.description}
                     className="flex items-center gap-2 rounded-full border border-maidan-gold/40 bg-maidan-gold/10 px-3 py-1.5 text-xs font-medium"
                   >
-                    <Icon className="h-3.5 w-3.5 text-maidan-gold" /> {badge.name}
+                    <CategoryIcon slug={badge.icon} className="h-3.5 w-3.5 text-maidan-gold" /> {badge.name}
                   </div>
                 );
               })}

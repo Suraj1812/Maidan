@@ -23,7 +23,7 @@ export function Hero({ stats }: { stats: PublicStats }) {
 
       <div className="relative mx-auto flex min-h-[640px] max-w-7xl flex-col justify-end px-5 sm:px-8 lg:px-10">
         <motion.div initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }} className="max-w-3xl">
-          <p className="mb-6 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-[#f4bd64]"><span className="h-px w-10 bg-[#f4bd64]" /> India&apos;s college arena</p>
+          <p className="mb-6 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-[#f4bd64]"><span className="h-px w-10 bg-[#f4bd64]" /> India&apos;s college arena · Apna Maidan. Apni Takkar.</p>
           <h1 className="max-w-2xl font-display text-6xl leading-[0.88] tracking-[-0.03em] text-white sm:text-7xl md:text-8xl lg:text-[7.5rem]">SHOW UP.<span className="block text-[#f4bd64]">STAND OUT.</span></h1>
           <p className="mt-7 max-w-xl text-pretty text-base leading-7 text-white/70 sm:text-lg">The place for college squads to compete, be seen, and earn every win. From the field to the stage to the screen.</p>
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">

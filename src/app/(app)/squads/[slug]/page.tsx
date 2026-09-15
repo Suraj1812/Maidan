@@ -4,7 +4,7 @@ import { Shield, Crown, Swords } from "lucide-react";
 import { getSquadBySlug } from "@/lib/data";
 import { InviteMemberForm } from "@/components/squads/invite-member-form";
 import { LeaveSquadButton } from "@/components/squads/leave-squad-button";
-import { getIcon } from "@/lib/icon-map";
+import { CategoryIcon } from "@/lib/icon-map";
 import { Badge } from "@/components/ui/badge";
 
 const STATUS_LABEL: Record<string, string> = {
@@ -63,7 +63,6 @@ export default async function SquadPage({ params }: { params: Promise<{ slug: st
           {challenges.length > 0 ? (
             <div className="space-y-2">
               {challenges.map((c) => {
-                const Icon = getIcon((c.category as unknown as { icon: string } | null)?.icon ?? "trophy");
                 const won = c.winner_squad === squad.id;
                 const lost = c.winner_squad && c.winner_squad !== squad.id;
                 return (
@@ -73,7 +72,10 @@ export default async function SquadPage({ params }: { params: Promise<{ slug: st
                     className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 hover:bg-white/[0.07]"
                   >
                     <div className="flex items-center gap-3">
-                      <Icon className="h-4 w-4 text-maidan-gold" />
+                      <CategoryIcon
+                        slug={(c.category as unknown as { icon: string } | null)?.icon ?? "trophy"}
+                        className="h-4 w-4 text-maidan-gold"
+                      />
                       <span className="text-sm font-medium">{c.title}</span>
                     </div>
                     <Badge

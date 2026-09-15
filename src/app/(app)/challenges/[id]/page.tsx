@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Swords, Clock, ShieldAlert, Play } from "lucide-react";
 import { getChallengeById } from "@/lib/data";
 import { finalizeChallengeIfReady } from "@/lib/actions";
-import { getIcon } from "@/lib/icon-map";
+import { CategoryIcon } from "@/lib/icon-map";
 import { Badge } from "@/components/ui/badge";
 import { EvidenceUpload } from "@/components/challenges/evidence-upload";
 import { AcceptChallengeButton, OpenVotingButton, VoteButtons, DisputeForm } from "@/components/challenges/action-buttons";
@@ -27,7 +27,7 @@ export default async function ChallengeDetailPage({ params }: { params: Promise<
   if (!result) notFound();
 
   const { challenge, evidence, votes, disputes, viewerId, myMemberSquadIds } = result;
-  const Icon = getIcon((challenge.category as unknown as { icon: string } | null)?.icon ?? "trophy");
+  const categoryIconSlug = (challenge.category as unknown as { icon: string } | null)?.icon ?? "trophy";
   const challenger = challenge.challenger as unknown as { id: string; name: string; slug: string; captain_id: string } | null;
   const opponent = challenge.opponent as unknown as { id: string; name: string; slug: string; captain_id: string } | null;
 
@@ -47,7 +47,7 @@ export default async function ChallengeDetailPage({ params }: { params: Promise<
     <div className="mx-auto max-w-3xl space-y-8">
       <div>
         <div className="flex flex-wrap items-center gap-2 text-xs font-medium uppercase tracking-wide text-maidan-gold">
-          <Icon className="h-3.5 w-3.5" /> {(challenge.category as unknown as { name: string } | null)?.name ?? "Challenge"}
+          <CategoryIcon slug={categoryIconSlug} className="h-3.5 w-3.5" /> {(challenge.category as unknown as { name: string } | null)?.name ?? "Challenge"}
           <Badge variant="outline" className="ml-2">
             {STATUS_LABEL[challenge.status] ?? challenge.status}
           </Badge>

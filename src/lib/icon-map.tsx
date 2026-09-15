@@ -36,3 +36,8 @@ export const ICONS: Record<string, LucideIcon> = {
 export function getIcon(name: string): LucideIcon {
   return ICONS[name] ?? Trophy;
 }
+
+export function CategoryIcon({ slug, className }: { slug: string; className?: string }) {
+  const Icon = ICONS[slug] ?? Trophy;
+  return <Icon className={className} />;
+}

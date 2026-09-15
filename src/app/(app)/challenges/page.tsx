@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Plus, Swords } from "lucide-react";
 import { getAllChallenges, getCategories } from "@/lib/data";
-import { getIcon } from "@/lib/icon-map";
+import { CategoryIcon } from "@/lib/icon-map";
 import { buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -54,7 +54,6 @@ export default async function ChallengesPage({
             const cat = c.category as unknown as { name: string; icon: string } | null;
             const challenger = c.challenger as unknown as { name: string } | null;
             const opponent = c.opponent as unknown as { name: string } | null;
-            const Icon = getIcon(cat?.icon ?? "trophy");
             return (
               <Link
                 key={c.id}
@@ -63,7 +62,7 @@ export default async function ChallengesPage({
               >
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-maidan-gold">
-                    <Icon className="h-3.5 w-3.5" /> {cat?.name ?? "Challenge"}
+                    <CategoryIcon slug={cat?.icon ?? "trophy"} className="h-3.5 w-3.5" /> {cat?.name ?? "Challenge"}
                   </span>
                   <Badge variant="outline" className="text-[10px]">
                     {STATUS_LABEL[c.status] ?? c.status}
